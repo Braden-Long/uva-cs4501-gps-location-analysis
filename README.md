@@ -58,7 +58,7 @@ The analysis generates various visualizations to help understand location patter
 
 - **Labeled Location Maps**: Enhanced maps with color-coded locations based on their classified type (home, work, shopping, etc.).
 
-<img alt="Sample Labeled Location Map" src="graphs/static_maps/user_12_labeled_locations_s.png" />
+<img alt="Sample Labeled Location Map" src="graphs/static_maps/user_59_labeled_locations_s.png" />
 
 ### Temporal Analysis
 
