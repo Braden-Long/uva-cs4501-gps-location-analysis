@@ -17,6 +17,9 @@ Key features include:
 
 This project uses data from the StudentLife dataset, which is a large, longitudinal dataset collected from 48 Dartmouth undergraduate and graduate students over a 10-week spring term. The dataset includes over 53 GB of continuous data, 32,000 self-reports, and pre-post surveys. Importantly, the dataset is anonymized, protecting the privacy of the participants in the study.
 
+The dataset can be found here:
+https://studentlife.cs.dartmouth.edu/dataset.html
+
 For this project, we specifically analyzed the GPS location data extracted from this dataset.
 
 ## How to Use
