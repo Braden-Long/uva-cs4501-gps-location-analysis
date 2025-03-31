@@ -78,7 +78,7 @@ The analysis generates various visualizations to help understand location patter
 
 ## File Structure
 
-<img width="645" alt="Screenshot 2025-03-31 at 5 25 46 PM" src="https://github.com/user-attachments/assets/bfb6c18c-83ae-4c27-a961-5146d875fea8" />
+<img width="649" alt="Screenshot 2025-03-31 at 6 13 07 PM" src="https://github.com/user-attachments/assets/efbe0744-59ea-4c24-94c7-4e93ec98fc16" />
 
 ## License
 
