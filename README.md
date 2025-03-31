@@ -52,7 +52,7 @@ The analysis generates various visualizations to help understand location patter
 - **User Location Maps**: Interactive folium maps showing all GPS points for a user as a heatmap, with significant locations highlighted as red circles.
 - **Labeled Location Maps**: Enhanced maps with color-coded locations based on their classified type (home, work, shopping, etc.).
 
-[Sample Labeled Location Map](graphs/static_maps/user_12_labeled_locations_s.png)
+<img alt="Sample Labeled Location Map" src="graphs/static_maps/user_12_labeled_locations_s.png" />
 
 ### Temporal Analysis
 
@@ -70,7 +70,7 @@ The analysis generates various visualizations to help understand location patter
 - **Work/School**: Locations visited primarily during weekday business hours.
 - **Brief Stops**: Locations with short-duration visits distributed throughout the week.
 
-[Sample Unlabeled Location Map](graphs/static_maps/user_59_locations_s.png)
+<img alt="Sample Unlabeled Location Map" src="graphs/static_maps/user_59_locations_s.png" />
 
 ## File Structure
 
