@@ -306,10 +306,11 @@ def visualize_user_locations(user_id, df, significant_clusters=None):
     """
     Create a map visualization of a user's locations with clusters highlighted.
     """
-    # Create graphs directory if it doesn't exist
-    import os
+    # Create base directories if they don't exist
     if not os.path.exists("graphs"):
         os.makedirs("graphs")
+    if not os.path.exists("graphs/maps"):
+        os.makedirs("graphs/maps")
     
     # Calculate center of the data for map initialization
     center_lat = df['latitude'].mean()
@@ -343,50 +344,14 @@ def visualize_user_locations(user_id, df, significant_clusters=None):
                 fill_opacity=0.7
             ).add_to(m)
     
-    # Save the map to HTML file (full size) in graphs directory
-    map_file = f"graphs/user_{user_id}_locations.html"
+    # Save the map to HTML file (full size) in graphs/maps directory
+    map_file = f"graphs/maps/user_{user_id}_locations.html"
     m.save(map_file)
     print(f"Interactive map saved as {map_file}")
     
     # Display the map in the notebook with controlled size
     from IPython.display import HTML, display
     display(HTML(f'<div style="width:600px; height:400px">{m._repr_html_()}</div>'))
-    
-    # Create a static plot for inclusion in reports
-    plt.figure(figsize=(10, 6))  # Larger size for saving
-    plt.scatter(df['longitude'], df['latitude'], alpha=0.5, s=1, c='blue')
-    
-    if significant_clusters is not None and len(significant_clusters) > 0:
-        plt.scatter(
-            significant_clusters['center_lon'], 
-            significant_clusters['center_lat'], 
-            s=100, c='red', marker='o', edgecolor='black'
-        )
-        
-        # Add cluster IDs as labels
-        for _, cluster in significant_clusters.iterrows():
-            plt.annotate(
-                str(cluster['cluster']),
-                (cluster['center_lon'], cluster['center_lat']),
-                textcoords="offset points",
-                xytext=(0, 5),
-                ha='center'
-            )
-    
-    plt.title(f"GPS Locations for User {user_id}")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
-    plt.grid(True, alpha=0.3)
-    
-    # Save at high resolution to graphs directory
-    png_file = f"graphs/user_{user_id}_locations.png"
-    plt.savefig(png_file, dpi=300)
-    
-    # Display the static image in the notebook with controlled size
-    print("\nStatic location map:")
-    display(HTML(f'<div style="width:600px; height:400px"><img src="{png_file}" width="600" height="400"/></div>'))
-    
-    plt.close()
 
 # Create visualizations for our best users
 for user_id in significant_locations:
@@ -407,10 +372,11 @@ def analyze_temporal_patterns(user_id, df, significant_clusters, save_individual
     - significant_clusters: DataFrame with significant locations
     - save_individual_plots: Whether to save individual plots for each cluster (default: False)
     """
-    # Create graphs directory if it doesn't exist
-    import os
+    # Create necessary directories if they don't exist
     if not os.path.exists("graphs"):
         os.makedirs("graphs")
+    if not os.path.exists("graphs/temporal"):
+        os.makedirs("graphs/temporal")
     
     # Make sure datetime column is present
     if 'datetime' not in df.columns:
@@ -427,6 +393,9 @@ def analyze_temporal_patterns(user_id, df, significant_clusters, save_individual
     
     # Create a plot for each significant cluster only if requested
     if save_individual_plots:
+        if not os.path.exists("graphs/temporal/clusters"):
+            os.makedirs("graphs/temporal/clusters")
+            
         for _, cluster in significant_clusters.iterrows():
             cluster_id = cluster['cluster']
             cluster_points = df[df['cluster'] == cluster_id]
@@ -452,7 +421,7 @@ def analyze_temporal_patterns(user_id, df, significant_clusters, save_individual
             plt.xticks(rotation=45)
             
             plt.tight_layout()
-            plt.savefig(f"graphs/user_{user_id}_cluster_{cluster_id}_temporal.png", dpi=300)
+            plt.savefig(f"graphs/temporal/clusters/user_{user_id}_cluster_{cluster_id}_temporal.png", dpi=300)
             plt.close()
     
     # Create an overall heatmap of location visits by hour and day (this is always saved)
@@ -464,8 +433,8 @@ def analyze_temporal_patterns(user_id, df, significant_clusters, save_individual
     plt.title(f'User {user_id}: Location Visits by Day and Hour')
     plt.tight_layout()
     
-    # Save the heatmap to graphs directory
-    heatmap_file = f"graphs/user_{user_id}_temporal_heatmap.png"
+    # Save the heatmap to graphs/temporal directory
+    heatmap_file = f"graphs/temporal/user_{user_id}_temporal_heatmap.png"
     plt.savefig(heatmap_file, dpi=300)
     
     # Display the heatmap directly with a more appropriate size
@@ -670,6 +639,7 @@ if use_places_api:
 else:
     print("\nSkipping Google Places API integration (set use_places_api = True to enable)")
 
+
 # %% [markdown]
 # ### Evaluating Classification Accuracy
 
@@ -679,10 +649,11 @@ def evaluate_classification_accuracy(labeled_clusters):
     Manually evaluate the accuracy of our classification based on place info
     and temporal patterns. In a real implementation, you would compare with ground truth.
     """
-    # Create graphs directory if it doesn't exist
-    import os
+    # Create directories if they don't exist
     if not os.path.exists("graphs"):
         os.makedirs("graphs")
+    if not os.path.exists("graphs/evaluation"):
+        os.makedirs("graphs/evaluation")
     
     # Without ground truth, we'll use a heuristic approach to estimate accuracy
     # based on confidence in the classification
@@ -753,8 +724,8 @@ def evaluate_classification_accuracy(labeled_clusters):
         plt.xlabel('Confidence Level')
         plt.ylabel('Number of Locations')
         
-        # Save to graphs directory
-        plt.savefig("graphs/classification_confidence.png", dpi=300)
+        # Save to graphs/evaluation directory
+        plt.savefig("graphs/evaluation/classification_confidence.png", dpi=300)
         plt.close()
         
         return {
@@ -779,10 +750,11 @@ def create_final_report(user_id, labeled_clusters, full_data):
     """
     Create a comprehensive report of our analysis
     """
-    # Create graphs directory if it doesn't exist
-    import os
+    # Create necessary directories if they don't exist
     if not os.path.exists("graphs"):
         os.makedirs("graphs")
+    if not os.path.exists("graphs/reports"):
+        os.makedirs("graphs/reports")
     
     if labeled_clusters is None or len(labeled_clusters) == 0:
         print(f"No labeled clusters available for user {user_id}")
@@ -876,8 +848,8 @@ def create_final_report(user_id, labeled_clusters, full_data):
         
         m.get_root().html.add_child(folium.Element(legend_html))
     
-    # Save the map (full size) to graphs directory
-    map_file = f"graphs/user_{user_id}_labeled_locations.html"
+    # Save the map (full size) to graphs/reports directory
+    map_file = f"graphs/reports/user_{user_id}_labeled_locations.html"
     m.save(map_file)
     print(f"Labeled interactive map saved as {map_file}")
     
@@ -909,8 +881,8 @@ def create_final_report(user_id, labeled_clusters, full_data):
         plt.title(f'Distribution of Location Types for User {user_id}')
         plt.tight_layout()
         
-        # Save to graphs directory
-        pie_chart_file = f"graphs/user_{user_id}_location_types.png"
+        # Save to graphs/reports directory
+        pie_chart_file = f"graphs/reports/user_{user_id}_location_types.png"
         plt.savefig(pie_chart_file, dpi=300)
         plt.show()
         plt.close()
@@ -956,11 +928,11 @@ def create_final_report(user_id, labeled_clusters, full_data):
     
     # Add pie chart section if location types are available
     if has_location_types:
-        pie_chart_file = f"graphs/user_{user_id}_location_types.png"
+        pie_chart_file = f"graphs/reports/user_{user_id}_location_types.png"
         html_report += f"""
         <div class="chart">
             <h2>Distribution of Location Types</h2>
-            <img src="{pie_chart_file}" alt="Location Types Distribution">
+            <img src="../{pie_chart_file}" alt="Location Types Distribution">
         </div>
         """
     
@@ -969,7 +941,6 @@ def create_final_report(user_id, labeled_clusters, full_data):
         <div class="chart">
             <h2>Spatial Distribution of Locations</h2>
             <p>View the interactive map: <a href="{map_file}" target="_blank">Open Map</a></p>
-            <img src="graphs/user_{user_id}_locations.png" alt="Spatial Distribution">
         </div>
         
         <h2>Methodology</h2>
@@ -982,8 +953,8 @@ def create_final_report(user_id, labeled_clusters, full_data):
     </html>
     """
     
-    # Save the HTML report to graphs directory
-    report_file = f"graphs/user_{user_id}_report.html"
+    # Save the HTML report to graphs/reports directory
+    report_file = f"graphs/reports/user_{user_id}_report.html"
     with open(report_file, "w") as f:
         f.write(html_report)
     
@@ -994,103 +965,4 @@ for user_id in significant_locations:
     print(f"\nCreating final report for user {user_id}...")
     create_final_report(user_id, significant_locations[user_id], full_data[user_id])
 
-# %% [markdown]
-# ### Complete Project Summary
-
-# %%
-def generate_project_summary():
-    """
-    Generate a summary of the entire project, methodology, and findings
-    """
-    # Create graphs directory if it doesn't exist
-    import os
-    if not os.path.exists("graphs"):
-        os.makedirs("graphs")
-    
-    # Create a Markdown summary
-    summary = """
-# GPS Location Analysis Project Summary
-
-## Overview
-This project analyzed GPS location data to identify significant locations that users frequently visit. 
-The analysis included:
-- Loading and preprocessing GPS data from multiple users
-- Selecting users with the best data quality
-- Clustering GPS coordinates to identify significant locations
-- Analyzing temporal patterns of visits
-- Integrating with Google Places API to label location types
-- Evaluating the accuracy of the classification
-- Creating visualizations and reports of the findings
-
-## Methodology
-
-### 1. Data Selection
-Users were evaluated based on:
-- Number of GPS records
-- Date range covered
-- Variety of locations visited
-- Mix of stationary and moving points
-
-### 2. Significant Location Identification
-- DBSCAN clustering algorithm was used to group nearby GPS points
-- Parameters: 
-  - eps=0.0005 (approximately 50 meters)
-  - min_samples=5 (minimum points to form a cluster)
-  - min_duration_minutes=10 (minimum time spent at location)
-
-### 3. Location Classification
-Locations were classified using:
-- Place types from Google Places API
-- Temporal patterns (time of day, day of week)
-- Visit duration and frequency
-
-### 4. Visualization
-- Interactive maps with Folium
-- Temporal heatmaps of visits
-- Distribution charts of location types
-
-## Results Summary
-"""
-    
-    # Add results for each analyzed user
-    for user_id in significant_locations:
-        user_results = significant_locations[user_id]
-        summary += f"""
-### User {user_id}
-- Total significant locations identified: {len(user_results)}
-"""
-        
-        if 'location_type' in user_results.columns and not user_results['location_type'].isna().all():
-            type_counts = user_results['location_type'].value_counts()
-            summary += "- Location types found:\n"
-            
-            for location_type, count in type_counts.items():
-                summary += f"  - {location_type}: {count}\n"
-        
-        # Add more specific insights if available
-        
-    summary += """
-## Conclusion
-This analysis demonstrates how GPS data can be effectively used to identify and classify important locations in a person's life. 
-The combination of spatial clustering, temporal analysis, and integration with place data provides a comprehensive picture of 
-mobility patterns and routine behaviors.
-
-## Future Improvements
-- Use labeled ground truth data to improve classification accuracy
-- Implement trajectory analysis to understand movement patterns between locations
-- Analyze changes in routines over time
-- Include more contextual data (weather, events, etc.) to enrich the analysis
-"""
-    
-    # Save the summary to graphs directory
-    with open("graphs/project_summary.md", "w") as f:
-        f.write(summary)
-    
-    print("Project summary saved as graphs/project_summary.md")
-
-# Generate the project summary
-generate_project_summary()
-
 print("\nProject analysis complete!")
-
-
